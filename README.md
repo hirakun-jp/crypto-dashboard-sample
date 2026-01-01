@@ -58,8 +58,8 @@ terraform init && terraform apply
 |:---:|:---|:---|
 | Sources | `src_hyperliquid` | Cloud Functions書き込み専用 |
 | Staging | `stg_hyperliquid` | 列名調整・型変換 |
-| Intermediate | `int_hyperliquid` | ビジネスロジック |
-| Marts | `mart_hyperliquid` | BI用集計 |
+| Intermediate | `int_coin_trend` | ビジネスロジック |
+| Marts | `mart_coin_trend`, `mart_shared` | BI用集計 |
 
 ## 実行スケジュール
 
