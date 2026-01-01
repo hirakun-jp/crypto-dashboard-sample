@@ -1,0 +1,7 @@
+config {
+  type: "declaration",
+  database: "${vars.gcp_project_id}",
+  schema: "src_hyperliquid",
+  name: "asset_ctxs_*",
+  description: "Raw HyperLiquid asset context data from S3 (DTS imported)"
+}

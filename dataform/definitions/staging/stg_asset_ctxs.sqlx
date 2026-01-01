@@ -1,0 +1,12 @@
+config {
+  type: "view",
+  database: "${vars.gcp_project_id}",
+  schema: "stg_hyperliquid",
+  description: "Staging: Column normalization for asset context data",
+  tags: ["staging"]
+}
+
+SELECT
+  *
+FROM
+  ${ref("asset_ctxs_*")}

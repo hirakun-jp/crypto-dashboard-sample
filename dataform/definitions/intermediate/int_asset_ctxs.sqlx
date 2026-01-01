@@ -1,0 +1,12 @@
+config {
+  type: "table",
+  database: "${vars.gcp_project_id}",
+  schema: "int_hyperliquid",
+  description: "Intermediate: Type conversion and time series normalization for asset contexts",
+  tags: ["intermediate"]
+}
+
+SELECT
+  *
+FROM
+  ${ref("stg_asset_ctxs")}
