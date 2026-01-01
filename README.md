@@ -18,17 +18,6 @@
 
 ![System Architecture](docs/architecture.png)
 
-<details>
-<summary>テキスト版</summary>
-
-```
-HyperLiquid API → Cloud Functions (02:00) → src_ → stg_ → int_ → mart_ → Looker Studio
-                                              ↑
-                                   Dataform (03:00)
-```
-
-</details>
-
 ## クイックスタート
 
 ### 1. 認証
@@ -76,7 +65,7 @@ terraform init && terraform apply
 
 | 時刻 | 処理 |
 |:---:|:---|
-| 02:00 | Cloud Functions（HyperLiquid API → src_） |
+| 02:00 | Cloud Functions（HyperLiquid API → src） |
 | 03:00 | Dataform（stg → int → mart） |
 
 ## IAM
