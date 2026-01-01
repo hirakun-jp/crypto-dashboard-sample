@@ -16,11 +16,18 @@
 
 ## アーキテクチャ
 
+![System Architecture](docs/architecture.png)
+
+<details>
+<summary>テキスト版</summary>
+
 ```
 HyperLiquid API → Cloud Functions (02:00) → src_ → stg_ → int_ → mart_ → Looker Studio
                                               ↑
                                    Dataform (03:00)
 ```
+
+</details>
 
 ## クイックスタート
 
@@ -78,6 +85,8 @@ terraform init && terraform apply
 
 | アカウントID | 用途 | 権限 |
 |:---|:---|:---|
+| `cf-ingest-hyperliquid` | Cloud Functions（API→BigQuery） | src: Editor |
+| `scheduler-ingest-hyperliquid` | Cloud Scheduler（Functions呼び出し） | cloudfunctions.invoker, run.invoker |
 | `dataform-hyperliquid` | Dataform SQLワークフロー | src: Viewer / stg,int,mart: Editor |
 | `looker-studio-viewer` | Looker Studio BI参照 | mart: Viewer のみ |
 
