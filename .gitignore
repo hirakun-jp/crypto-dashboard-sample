@@ -12,8 +12,12 @@
 .terraform.lock.hcl
 terraform.tfvars
 *.tfplan
+.build/
 
 # Sensitive files
 *.pem
 *.key
 credentials.json
+
+# GitHub
+.gitignore
