@@ -1,8 +1,10 @@
-# Crypto Market Data Pipeline
+<h1 align="center">Crypto Market Data Pipeline</h1>
 
-![BigQuery](https://img.shields.io/badge/BigQuery-4285F4?style=for-the-badge&logo=google-cloud&logoColor=white)
-![Terraform](https://img.shields.io/badge/Terraform-7B42BC?style=for-the-badge&logo=terraform&logoColor=white)
-![Dataform](https://img.shields.io/badge/Dataform-4285F4?style=for-the-badge&logo=google-cloud&logoColor=white)
+<p align="center">
+  <img src="https://img.shields.io/badge/BigQuery-4285F4?style=for-the-badge&logo=google-cloud&logoColor=white" alt="BigQuery">
+  <img src="https://img.shields.io/badge/Terraform-7B42BC?style=for-the-badge&logo=terraform&logoColor=white" alt="Terraform">
+  <img src="https://img.shields.io/badge/Dataform-4285F4?style=for-the-badge&logo=google-cloud&logoColor=white" alt="Dataform">
+</p>
 
 暗号資産マーケットデータの可視化パイプライン（学習・検証用途）
 
@@ -67,7 +69,7 @@ terraform init && terraform apply
 | `dataform-hyperliquid` | Dataform SQLワークフロー | src: Viewer / stg,int,mart: Editor |
 | `looker-studio-viewer` | Looker Studio BI参照 | mart: Viewer のみ |
 
-### 人間用IAM（本番運用時の参考）
+### ユーザーIAM（本番運用時の参考）
 
 | ロール | sources | staging | intermediate | marts | Dataform |
 |:---|:---:|:---:|:---:|:---:|:---:|
@@ -76,7 +78,7 @@ terraform init && terraform apply
 | 業務委託アナリスト | - | Viewer | Editor | Editor | Editor |
 | ビジネスユーザー | - | - | - | Viewer | - |
 
-> 本リポジトリはサンプル実装のため、人間用IAMはTerraformに含めていない。
+> 本リポジトリはサンプル実装のため、ユーザーIAMはTerraformに含めていない。
 > `terraform/iam.tf` にテンプレートをコメントアウトで記載。
 
 ## 注意事項
