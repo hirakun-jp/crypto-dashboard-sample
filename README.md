@@ -1,18 +1,10 @@
-<div align="center">
-
 # Crypto Market Data Pipeline
-
-### HyperLiquid API → BigQuery → Dataform → Looker Studio
 
 ![BigQuery](https://img.shields.io/badge/BigQuery-4285F4?style=for-the-badge&logo=google-cloud&logoColor=white)
 ![Terraform](https://img.shields.io/badge/Terraform-7B42BC?style=for-the-badge&logo=terraform&logoColor=white)
 ![Dataform](https://img.shields.io/badge/Dataform-4285F4?style=for-the-badge&logo=google-cloud&logoColor=white)
 
 暗号資産マーケットデータの可視化パイプライン（学習・検証用途）
-
-</div>
-
----
 
 ## クイックスタート
 
@@ -91,11 +83,3 @@ terraform init && terraform apply
 
 - `terraform.tfvars` はGitにコミットしない
 - 失敗時は Cloud Monitoring からメール通知
-
----
-
-<div align="center">
-
-*Powered by Claude Code*
-
-</div>
