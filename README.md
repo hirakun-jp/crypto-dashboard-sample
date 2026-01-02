@@ -14,10 +14,6 @@
 
 ---
 
-## アーキテクチャ
-
-![System Architecture](docs/architecture.png)
-
 ## クイックスタート
 
 ### 1. 認証
