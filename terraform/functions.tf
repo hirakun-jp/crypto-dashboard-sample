@@ -53,6 +53,7 @@ resource "google_cloudfunctions2_function" "ingest_hyperliquid" {
 
   depends_on = [
     google_project_service.required_apis,
+    time_sleep.wait_for_cloudbuild_iam,
   ]
 }
 

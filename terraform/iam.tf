@@ -24,6 +24,15 @@ resource "google_project_iam_member" "cloudbuild_artifact_registry" {
   member  = "serviceAccount:${data.google_project.current.number}@cloudbuild.gserviceaccount.com"
 }
 
+resource "time_sleep" "wait_for_cloudbuild_iam" {
+  depends_on = [
+    google_project_iam_member.cloudbuild_logs_writer,
+    google_project_iam_member.cloudbuild_storage_viewer,
+    google_project_iam_member.cloudbuild_artifact_registry,
+  ]
+  create_duration = "60s"
+}
+
 ################################################################################
 # Cloud Functions (API → BigQuery)
 ################################################################################
