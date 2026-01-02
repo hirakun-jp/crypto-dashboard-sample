@@ -82,9 +82,6 @@ resource "google_monitoring_alert_policy" "dataform_failure_alert" {
   notification_channels = [google_monitoring_notification_channel.dataform_email.id]
 
   alert_strategy {
-    notification_rate_limit {
-      period = "300s"
-    }
     auto_close = "604800s"
   }
 

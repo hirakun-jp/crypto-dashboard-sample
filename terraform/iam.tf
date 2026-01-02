@@ -1,4 +1,30 @@
 ################################################################################
+# Cloud Build (for Cloud Functions Gen2)
+################################################################################
+
+data "google_project" "current" {
+  project_id = var.gcp_project_id
+}
+
+resource "google_project_iam_member" "cloudbuild_logs_writer" {
+  project = var.gcp_project_id
+  role    = "roles/logging.logWriter"
+  member  = "serviceAccount:${data.google_project.current.number}@cloudbuild.gserviceaccount.com"
+}
+
+resource "google_project_iam_member" "cloudbuild_storage_viewer" {
+  project = var.gcp_project_id
+  role    = "roles/storage.objectViewer"
+  member  = "serviceAccount:${data.google_project.current.number}@cloudbuild.gserviceaccount.com"
+}
+
+resource "google_project_iam_member" "cloudbuild_artifact_registry" {
+  project = var.gcp_project_id
+  role    = "roles/artifactregistry.writer"
+  member  = "serviceAccount:${data.google_project.current.number}@cloudbuild.gserviceaccount.com"
+}
+
+################################################################################
 # Cloud Functions (API → BigQuery)
 ################################################################################
 

@@ -66,6 +66,7 @@ terraform init && terraform apply
 
 | アカウントID | 用途 | 権限 |
 |:---|:---|:---|
+| `{PROJECT_NUMBER}@cloudbuild.gserviceaccount.com` | Cloud Build（Functions Gen2ビルド） | logging.logWriter, storage.objectViewer, artifactregistry.writer |
 | `cf-ingest-hyperliquid` | Cloud Functions（API→BigQuery） | src: Editor |
 | `scheduler-ingest-hyperliquid` | Cloud Scheduler（Functions呼び出し） | cloudfunctions.invoker, run.invoker |
 | `dataform-hyperliquid` | Dataform SQLワークフロー | src: Viewer / stg,int,mart: Editor |
