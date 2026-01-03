@@ -183,6 +183,12 @@ resource "google_secret_manager_secret_iam_member" "dataform_github_token" {
   member    = "serviceAccount:${google_service_account.dataform.email}"
 }
 
+resource "google_secret_manager_secret_iam_member" "dataform_default_sa_github_token" {
+  secret_id = google_secret_manager_secret.github_token.secret_id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:service-${data.google_project.current.number}@gcp-sa-dataform.iam.gserviceaccount.com"
+}
+
 resource "google_service_account_iam_member" "dataform_default_sa_token_creator" {
   service_account_id = google_service_account.dataform.name
   role               = "roles/iam.serviceAccountTokenCreator"

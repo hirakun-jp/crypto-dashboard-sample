@@ -1,2 +1,3 @@
-defaultProject: your-gcp-project-id
+defaultProject: ro-crypto-dashboard-sample
 defaultLocation: asia-northeast1
+dataformCoreVersion: 3.0.35
