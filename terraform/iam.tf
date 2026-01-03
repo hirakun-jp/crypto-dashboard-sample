@@ -59,7 +59,7 @@ resource "time_sleep" "wait_for_cloudbuild_iam" {
     google_project_iam_member.cloudbuild_logs_writer,
     google_project_iam_member.cloudbuild_storage_viewer,
   ]
-  create_duration = "60s"
+  create_duration = "120s"
 }
 
 ################################################################################
