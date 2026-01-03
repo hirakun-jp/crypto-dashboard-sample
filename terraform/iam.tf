@@ -183,6 +183,12 @@ resource "google_secret_manager_secret_iam_member" "dataform_github_token" {
   member    = "serviceAccount:${google_service_account.dataform.email}"
 }
 
+resource "google_service_account_iam_member" "dataform_default_sa_token_creator" {
+  service_account_id = google_service_account.dataform.name
+  role               = "roles/iam.serviceAccountTokenCreator"
+  member             = "serviceAccount:service-${data.google_project.current.number}@gcp-sa-dataform.iam.gserviceaccount.com"
+}
+
 ################################################################################
 # Looker Studio (BI)
 ################################################################################
@@ -263,6 +269,12 @@ resource "google_bigquery_dataset_iam_member" "looker_studio_marts_shared_viewer
 #   member  = "group:${var.data_engineer_group}"
 # }
 #
+# resource "google_service_account_iam_member" "engineer_dataform_sa_user" {
+#   service_account_id = google_service_account.dataform.name
+#   role               = "roles/iam.serviceAccountUser"
+#   member             = "group:${var.data_engineer_group}"
+# }
+#
 # ----------------------------------------
 # Internal Analyst: sources(Viewer), stg/int/mart(Editor)
 # ----------------------------------------
@@ -276,6 +288,12 @@ resource "google_bigquery_dataset_iam_member" "looker_studio_marts_shared_viewer
 #   project = var.gcp_project_id
 #   role    = "roles/dataform.editor"
 #   member  = "group:${var.internal_analyst_group}"
+# }
+#
+# resource "google_service_account_iam_member" "internal_analyst_dataform_sa_user" {
+#   service_account_id = google_service_account.dataform.name
+#   role               = "roles/iam.serviceAccountUser"
+#   member             = "group:${var.internal_analyst_group}"
 # }
 #
 # resource "google_bigquery_dataset_iam_member" "internal_analyst_sources_viewer" {
@@ -301,6 +319,12 @@ resource "google_bigquery_dataset_iam_member" "looker_studio_marts_shared_viewer
 #   member  = "group:${var.external_analyst_group}"
 # }
 #
+# resource "google_service_account_iam_member" "external_analyst_dataform_sa_user" {
+#   service_account_id = google_service_account.dataform.name
+#   role               = "roles/iam.serviceAccountUser"
+#   member             = "group:${var.external_analyst_group}"
+# }
+#
 # resource "google_bigquery_dataset_iam_member" "external_analyst_staging_viewer" {
 #   for_each   = toset(var.environments)
 #   dataset_id = google_bigquery_dataset.staging[each.value].dataset_id
@@ -319,6 +343,7 @@ resource "google_bigquery_dataset_iam_member" "looker_studio_marts_shared_viewer
 #
 # ----------------------------------------
 # Business User: marts(Viewer) only
+# (No Dataform access, no serviceAccountUser needed)
 # ----------------------------------------
 # resource "google_project_iam_member" "business_user_job_user" {
 #   project = var.gcp_project_id

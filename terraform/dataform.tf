@@ -3,10 +3,11 @@
 ################################################################################
 
 resource "google_dataform_repository" "hyperliquid" {
-  provider = google-beta
-  name     = "hyperliquid-dataform"
-  region   = var.gcp_region
-  project  = var.gcp_project_id
+  provider        = google-beta
+  name            = "hyperliquid-dataform"
+  region          = var.gcp_region
+  project         = var.gcp_project_id
+  service_account = google_service_account.dataform.email
 
   git_remote_settings {
     url                                 = var.github_repository_url
