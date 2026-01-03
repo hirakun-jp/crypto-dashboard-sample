@@ -6,29 +6,58 @@ data "google_project" "current" {
   project_id = var.gcp_project_id
 }
 
-resource "google_project_iam_member" "cloudbuild_logs_writer" {
-  project = var.gcp_project_id
-  role    = "roles/logging.logWriter"
-  member  = "serviceAccount:${data.google_project.current.number}@cloudbuild.gserviceaccount.com"
+resource "google_service_account" "cloudbuild" {
+  account_id   = "cloudbuild-functions"
+  display_name = "Cloud Build - Functions Build"
+  description  = "Service account for building Cloud Functions Gen2"
+  project      = var.gcp_project_id
 }
 
-resource "google_project_iam_member" "cloudbuild_storage_viewer" {
+resource "google_project_iam_member" "cloudbuild_builder" {
   project = var.gcp_project_id
-  role    = "roles/storage.objectViewer"
-  member  = "serviceAccount:${data.google_project.current.number}@cloudbuild.gserviceaccount.com"
+  role    = "roles/cloudbuild.builds.builder"
+  member  = "serviceAccount:${google_service_account.cloudbuild.email}"
 }
 
 resource "google_project_iam_member" "cloudbuild_artifact_registry" {
   project = var.gcp_project_id
   role    = "roles/artifactregistry.writer"
-  member  = "serviceAccount:${data.google_project.current.number}@cloudbuild.gserviceaccount.com"
+  member  = "serviceAccount:${google_service_account.cloudbuild.email}"
+}
+
+resource "google_project_iam_member" "cloudbuild_run_admin" {
+  project = var.gcp_project_id
+  role    = "roles/run.admin"
+  member  = "serviceAccount:${google_service_account.cloudbuild.email}"
+}
+
+resource "google_project_iam_member" "cloudbuild_sa_user" {
+  project = var.gcp_project_id
+  role    = "roles/iam.serviceAccountUser"
+  member  = "serviceAccount:${google_service_account.cloudbuild.email}"
+}
+
+resource "google_project_iam_member" "cloudbuild_logs_writer" {
+  project = var.gcp_project_id
+  role    = "roles/logging.logWriter"
+  member  = "serviceAccount:${google_service_account.cloudbuild.email}"
+}
+
+resource "google_project_iam_member" "cloudbuild_storage_viewer" {
+  project = var.gcp_project_id
+  role    = "roles/storage.objectViewer"
+  member  = "serviceAccount:${google_service_account.cloudbuild.email}"
 }
 
 resource "time_sleep" "wait_for_cloudbuild_iam" {
   depends_on = [
+    google_service_account.cloudbuild,
+    google_project_iam_member.cloudbuild_builder,
+    google_project_iam_member.cloudbuild_artifact_registry,
+    google_project_iam_member.cloudbuild_run_admin,
+    google_project_iam_member.cloudbuild_sa_user,
     google_project_iam_member.cloudbuild_logs_writer,
     google_project_iam_member.cloudbuild_storage_viewer,
-    google_project_iam_member.cloudbuild_artifact_registry,
   ]
   create_duration = "60s"
 }

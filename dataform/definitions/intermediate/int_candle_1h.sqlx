@@ -1,0 +1,25 @@
+config {
+  type: "table",
+  database: "${vars.gcp_project_id}",
+  schema: "int_coin_trend",
+  description: "Intermediate: Normalized candle data with technical indicators",
+  tags: ["intermediate"]
+}
+
+SELECT
+  time,
+  symbol,
+  open,
+  high,
+  low,
+  close,
+  volume,
+  num_trades,
+  (close - open) AS price_change,
+  CASE
+    WHEN open > 0 THEN ((close - open) / open) * 100
+    ELSE 0
+  END AS price_change_pct,
+  updated_at
+FROM
+  ${ref("stg_candle_1h")}

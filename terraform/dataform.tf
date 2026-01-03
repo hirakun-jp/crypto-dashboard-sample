@@ -37,7 +37,8 @@ resource "google_dataform_repository_release_config" "prod" {
 
   code_compilation_config {
     vars = {
-      environment = "prod"
+      environment    = "prod"
+      gcp_project_id = var.gcp_project_id
     }
   }
 }

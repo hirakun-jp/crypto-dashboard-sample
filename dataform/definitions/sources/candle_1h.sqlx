@@ -2,6 +2,6 @@ config {
   type: "declaration",
   database: "${vars.gcp_project_id}",
   schema: "src_hyperliquid",
-  name: "asset_ctxs_*",
-  description: "Raw HyperLiquid asset context data from S3 (DTS imported)"
+  name: "candle_1h",
+  description: "Raw HyperLiquid 1-hour candle data (Cloud Functions ingested)"
 }

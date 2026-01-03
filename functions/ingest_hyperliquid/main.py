@@ -49,6 +49,7 @@ def fetch_candles(coin: str, start_ts: int, end_ts: int) -> pd.DataFrame | None:
     df["close"] = df["close"].astype(float)
     df["volume"] = df["volume"].astype(float)
     df["num_trades"] = df["num_trades"].astype(int)
+    df["updated_at"] = datetime.now(timezone.utc)
     return df.sort_values("time")
 
 
@@ -67,6 +68,7 @@ def load_to_bigquery(df: pd.DataFrame, project_id: str, dataset_id: str, table_i
             bigquery.SchemaField("volume", "FLOAT64"),
             bigquery.SchemaField("num_trades", "INT64"),
             bigquery.SchemaField("symbol", "STRING"),
+            bigquery.SchemaField("updated_at", "TIMESTAMP"),
         ],
     )
 
@@ -75,16 +77,17 @@ def load_to_bigquery(df: pd.DataFrame, project_id: str, dataset_id: str, table_i
     print(f"Loaded {len(df)} rows to {table_ref}")
 
 
-@functions_framework.http
-def ingest_hyperliquid(request):
-    import os
+def run_ingestion(project_id: str, dataset_id: str, start_date: str | None, end_date: str | None) -> dict:
+    if start_date:
+        start_dt = datetime.strptime(start_date, "%Y-%m-%d").replace(tzinfo=timezone.utc)
+    else:
+        yesterday = datetime.now(timezone.utc).date() - timedelta(days=1)
+        start_dt = datetime(yesterday.year, yesterday.month, yesterday.day, tzinfo=timezone.utc)
 
-    project_id = os.environ.get("GCP_PROJECT_ID")
-    dataset_id = os.environ.get("BQ_DATASET_ID", "src_hyperliquid")
-
-    yesterday = datetime.now(timezone.utc).date() - timedelta(days=1)
-    start_dt = datetime(yesterday.year, yesterday.month, yesterday.day, tzinfo=timezone.utc)
-    end_dt = start_dt + timedelta(days=1)
+    if end_date:
+        end_dt = datetime.strptime(end_date, "%Y-%m-%d").replace(tzinfo=timezone.utc) + timedelta(days=1)
+    else:
+        end_dt = start_dt + timedelta(days=1)
 
     start_ts = int(start_dt.timestamp() * 1000)
     end_ts = int(end_dt.timestamp() * 1000) - 1
@@ -102,4 +105,22 @@ def ingest_hyperliquid(request):
         except Exception as e:
             results.append(f"{coin}: error - {str(e)}")
 
-    return {"status": "completed", "date": str(yesterday), "results": results}
+    return {
+        "status": "completed",
+        "start_date": start_dt.strftime("%Y-%m-%d"),
+        "end_date": (end_dt - timedelta(days=1)).strftime("%Y-%m-%d"),
+        "results": results,
+    }
+
+
+@functions_framework.http
+def ingest_hyperliquid(request):
+    import os
+
+    project_id = os.environ.get("GCP_PROJECT_ID")
+    dataset_id = os.environ.get("BQ_DATASET_ID", "src_hyperliquid")
+
+    start_date = request.args.get("start_date")
+    end_date = request.args.get("end_date")
+
+    return run_ingestion(project_id, dataset_id, start_date, end_date)

@@ -29,8 +29,9 @@ resource "google_cloudfunctions2_function" "ingest_hyperliquid" {
   project  = var.gcp_project_id
 
   build_config {
-    runtime     = "python312"
-    entry_point = "ingest_hyperliquid"
+    runtime         = "python312"
+    entry_point     = "ingest_hyperliquid"
+    service_account = google_service_account.cloudbuild.id
     source {
       storage_source {
         bucket = google_storage_bucket.functions_source.name
