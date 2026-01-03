@@ -1,0 +1,6 @@
+config {
+  type: "declaration",
+  schema: "src_hyperliquid",
+  name: "candle_1h",
+  description: "Raw HyperLiquid 1-hour candle data (Cloud Functions ingested)"
+}

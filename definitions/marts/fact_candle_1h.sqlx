@@ -1,0 +1,20 @@
+config {
+  type: "table",
+  schema: "mart_coin_trend",
+  description: "Fact table: Hourly candle data for BI consumption",
+  tags: ["marts", "fact"]
+}
+
+SELECT
+  time,
+  symbol,
+  open,
+  high,
+  low,
+  close,
+  volume,
+  num_trades,
+  price_change,
+  price_change_pct
+FROM
+  ${ref("int_coin_trend", "candle_1h")}

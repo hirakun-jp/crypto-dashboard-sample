@@ -1,0 +1,4 @@
+defaultProject: xxx
+defaultLocation: asia-northeast1
+defaultAssertionDataset: dataform_assertions
+dataformCoreVersion: 3.0.35

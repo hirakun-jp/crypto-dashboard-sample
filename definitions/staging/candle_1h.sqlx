@@ -1,0 +1,25 @@
+config {
+  type: "view",
+  schema: "stg_hyperliquid",
+  description: "Staging: Deduplicated 1-hour candle data with latest updated_at",
+  tags: ["staging"]
+}
+
+SELECT
+  time,
+  open,
+  high,
+  low,
+  close,
+  volume,
+  num_trades,
+  symbol,
+  updated_at
+FROM (
+  SELECT
+    *,
+    ROW_NUMBER() OVER (PARTITION BY symbol, time ORDER BY updated_at DESC) AS rn
+  FROM
+    ${ref("src_hyperliquid","candle_1h")}
+)
+WHERE rn = 1
