@@ -1,5 +1,5 @@
 ################################################################################
-# Sources Layer (DTS writes here)
+# Sources Layer (Cloud Functions writes here)
 ################################################################################
 
 resource "google_bigquery_dataset" "sources" {
@@ -12,6 +12,31 @@ resource "google_bigquery_dataset" "sources" {
     environment = "prod"
     layer       = "sources"
     managed_by  = "terraform"
+  }
+}
+
+resource "google_bigquery_table" "candle_1h" {
+  dataset_id          = google_bigquery_dataset.sources.dataset_id
+  table_id            = "candle_1h"
+  project             = var.gcp_project_id
+  deletion_protection = true
+  description         = "HyperLiquid 1-hour candle data (BTC, ETH, DOGE)"
+
+  schema = jsonencode([
+    { name = "time", type = "TIMESTAMP", mode = "NULLABLE" },
+    { name = "open", type = "FLOAT", mode = "NULLABLE" },
+    { name = "high", type = "FLOAT", mode = "NULLABLE" },
+    { name = "low", type = "FLOAT", mode = "NULLABLE" },
+    { name = "close", type = "FLOAT", mode = "NULLABLE" },
+    { name = "volume", type = "FLOAT", mode = "NULLABLE" },
+    { name = "num_trades", type = "INTEGER", mode = "NULLABLE" },
+    { name = "symbol", type = "STRING", mode = "NULLABLE" },
+    { name = "updated_at", type = "TIMESTAMP", mode = "NULLABLE" },
+  ])
+
+  labels = {
+    layer      = "sources"
+    managed_by = "terraform"
   }
 }
 
