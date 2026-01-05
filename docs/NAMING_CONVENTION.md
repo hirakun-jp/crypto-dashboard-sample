@@ -362,6 +362,24 @@ resource "google_service_account" "hyperliquid_load_daily_transfer_sa" {
   account_id   = "hyperliquid-load-daily-transfer-sa"
   display_name = "DTS - HyperLiquid Daily Load"
 }
+
+# サービスアカウント（別パターン: bq-dts-hyperliquid）
+resource "google_service_account" "bq_dts" {
+  account_id   = "bq-dts-hyperliquid"
+  display_name = "BigQuery Data Transfer Service for HyperLiquid"
+  description  = "Service account for BigQuery DTS to import data from S3"
+  project      = var.gcp_project_id
+}
+
+# Dataset IAM（DTS用SAにsourcesデータセットへの書き込み権限を付与）
+resource "google_bigquery_dataset_iam_member" "dts_sources_editor" {
+  for_each = toset(var.environments)
+
+  dataset_id = google_bigquery_dataset.sources[each.value].dataset_id
+  role       = "roles/bigquery.dataEditor"
+  member     = "serviceAccount:${google_service_account.bq_dts.email}"
+  project    = var.gcp_project_id
+}
 ```
 
 ## 2.9 Dataformリポジトリ / ワークスペース
