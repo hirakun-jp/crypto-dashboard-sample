@@ -2,12 +2,12 @@
 # Repository
 ################################################################################
 
-resource "google_dataform_repository" "hyperliquid" {
+resource "google_dataform_repository" "analytics_dataform" {
   provider        = google-beta
-  name            = "hyperliquid-dataform"
+  name            = "analytics-dataform"
   region          = var.gcp_region
   project         = var.gcp_project_id
-  service_account = google_service_account.dataform.email
+  service_account = google_service_account.analytics_dataform_sa.email
 
   git_remote_settings {
     url                                 = var.github_repository_url
@@ -31,7 +31,7 @@ resource "google_dataform_repository_release_config" "prod" {
   provider   = google-beta
   project    = var.gcp_project_id
   region     = var.gcp_region
-  repository = google_dataform_repository.hyperliquid.name
+  repository = google_dataform_repository.analytics_dataform.name
   name       = "prod"
 
   git_commitish = "main"
@@ -53,7 +53,7 @@ resource "google_dataform_repository_workflow_config" "prod" {
   provider       = google-beta
   project        = var.gcp_project_id
   region         = var.gcp_region
-  repository     = google_dataform_repository.hyperliquid.name
+  repository     = google_dataform_repository.analytics_dataform.name
   name           = "prod"
   release_config = google_dataform_repository_release_config.prod.id
 

@@ -84,35 +84,26 @@ terraform plan
 terraform apply
 ```
 
-## Step 5: Dataform 手動設定
+## Step 5: Dataform 手動設定（Cloud Console）
 
-Terraformでは未サポートのため、以下を手動で実行する。
+Terraformでは未サポートのため、Cloud Console から手動で設定する。
+（`gcloud dataform` コマンドは存在しない）
 
 ### 5-1. Strict Act-As モード有効化
 
-```bash
-gcloud dataform repositories update hyperliquid-dataform \
-  --region=asia-northeast1 \
-  --set-authenticated-user-admin
-```
+1. [Cloud Console Dataform](https://console.cloud.google.com/bigquery/dataform) にアクセス
+2. `analytics-dataform` リポジトリをクリック
+3. 「設定」タブを開く
+4. 「actAs 権限チェック」セクションで「actAs 権限チェックを適用する」を有効化
 
 ### 5-2. リリース構成の初回コンパイル
 
 Terraformで作成されるリリース構成はスケジュール設定を含まないため、初回は手動でコンパイルを実行する。
 
-**Cloud Consoleから:**
-1. Cloud Console → Dataform → hyperliquid-dataform リポジトリ
-2. 「リリースとスケジュール」タブ
-3. 対象のリリース構成（dev / prod）を選択
-4. 「コンパイル」をクリック
-
-**gcloud CLI:**
-```bash
-gcloud dataform compilation-results create \
-  --repository=hyperliquid-dataform \
-  --region=asia-northeast1 \
-  --release-config=prod
-```
+1. [Cloud Console Dataform](https://console.cloud.google.com/bigquery/dataform) にアクセス
+2. `analytics-dataform` リポジトリをクリック
+3. 「リリースとスケジュール」タブを開く
+4. リリース構成（prod）の行で「新しいコンパイル」をクリック
 
 ## Step 6: 動作確認
 
@@ -120,10 +111,10 @@ gcloud dataform compilation-results create \
 
 | リソース | 確認場所 | 確認内容 |
 |---------|---------|---------|
-| Cloud Functions | Cloud Run Functions | `ingest-hyperliquid` が作成されている |
+| Cloud Functions | Cloud Run Functions | `hyperliquid-ingest-function` が作成されている |
 | BigQuery | BigQuery | データセット（`src_hyperliquid`, `stg_hyperliquid`, `stg_hyperliquid_dev` 等）が作成されている |
-| Dataform | Dataform | `hyperliquid-dataform` リポジトリが作成されている |
-| Cloud Scheduler | Cloud Scheduler | `ingest-hyperliquid-daily` が作成されている |
+| Dataform | Dataform | `analytics-dataform` リポジトリが作成されている |
+| Cloud Scheduler | Cloud Scheduler | `hyperliquid-ingest-daily-scheduler` が作成されている |
 
 ## Step 7: 手動テスト
 
@@ -131,7 +122,7 @@ gcloud dataform compilation-results create \
 
 **デプロイ後の手動実行（当日分）:**
 ```bash
-gcloud functions call ingest-hyperliquid --region=asia-northeast1
+gcloud functions call hyperliquid-ingest-function --region=asia-northeast1
 ```
 
 **期間指定で実行（過去データ取得）:**
@@ -141,18 +132,18 @@ Cloud Functions Gen2は認証が必要。認証トークン付きでcurlを実�
 Bash / macOS / Linux:
 ```bash
 curl -H "Authorization: Bearer $(gcloud auth print-identity-token)" \
-  "https://asia-northeast1-<PROJECT_ID>.cloudfunctions.net/ingest-hyperliquid?start_date=2025-10-01&end_date=2025-10-31"
+  "https://asia-northeast1-<PROJECT_ID>.cloudfunctions.net/hyperliquid-ingest-function?start_date=2025-10-01&end_date=2025-10-31"
 ```
 
 PowerShell (Windows):
 ```powershell
 curl.exe -H "Authorization: Bearer $(gcloud auth print-identity-token)" `
-  "https://asia-northeast1-<PROJECT_ID>.cloudfunctions.net/ingest-hyperliquid?start_date=2025-10-01&end_date=2025-10-31"
+  "https://asia-northeast1-<PROJECT_ID>.cloudfunctions.net/hyperliquid-ingest-function?start_date=2025-10-01&end_date=2025-10-31"
 ```
 
 ### Dataform（SQLワークフロー）
 
-1. GCPコンソール → Dataform → `hyperliquid-dataform`
+1. GCPコンソール → Dataform → `analytics-dataform`
 2. Workspaces → 新規作成 or 既存選択
 3. Start Execution → Execute all
 
@@ -196,4 +187,4 @@ Terraformでは120秒のwaitを入れていますが、エラーが発生した�
 
 ### 権限エラー
 
-strict act-as モードが有効な場合、Dataform操作を行うユーザーは `dataform-hyperliquid` サービスアカウントへの `roles/iam.serviceAccountUser` が必要です。
+strict act-as モードが有効な場合、Dataform操作を行うユーザーは `analytics-dataform-sa` サービスアカウントへの `roles/iam.serviceAccountUser` が必要です。

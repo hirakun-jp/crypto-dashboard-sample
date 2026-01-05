@@ -64,8 +64,11 @@ terraform init && terraform apply
 │   ├── staging/            # 列名調整・重複除去
 │   ├── intermediate/       # ビジネスロジック
 │   └── marts/              # BI用集計（fact_, dim_）
+├── docs/                   # ドキュメント
+│   ├── NAMING_CONVENTION.md    # 命名規則
+│   ├── DEPLOYMENT.md           # デプロイ手順
+│   └── MIGRATION_NAMING_CONVENTION.md  # 命名規則移行手順
 ├── workflow_settings.yaml  # Dataform Native設定
-├── DEPLOYMENT.md           # デプロイ手順
 └── README.md               # 本ファイル
 ```
 
@@ -92,11 +95,11 @@ terraform init && terraform apply
 
 | アカウントID | 用途 | 権限 |
 |:---|:---|:---|
-| `cloudbuild-functions` | Cloud Build（Functions Gen2ビルド） | cloudbuild.builds.builder, artifactregistry.writer, run.admin, iam.serviceAccountUser, logging.logWriter, storage.objectViewer |
-| `cf-ingest-hyperliquid` | Cloud Functions（API→BigQuery） | bigquery.jobUser, src: dataEditor |
-| `scheduler-ingest-hyperliquid` | Cloud Scheduler（Functions呼び出し） | cloudfunctions.invoker, run.invoker |
-| `dataform-hyperliquid` | Dataform SQLワークフロー | bigquery.jobUser, bigquery.user, src: dataViewer, stg/int/mart: dataEditor |
-| `looker-studio-viewer` | Looker Studio BI参照 | bigquery.jobUser, mart: dataViewer, Looker Studio SA: tokenCreator |
+| `functions-cloudbuild-sa` | Cloud Build（Functions Gen2ビルド） | cloudbuild.builds.builder, artifactregistry.writer, run.admin, iam.serviceAccountUser, logging.logWriter, storage.objectViewer |
+| `hyperliquid-ingest-function-sa` | Cloud Functions（API→BigQuery） | bigquery.jobUser, src: dataEditor |
+| `hl-ingest-daily-scheduler-sa` | Cloud Scheduler（Functions呼び出し） | cloudfunctions.invoker, run.invoker |
+| `analytics-dataform-sa` | Dataform SQLワークフロー | bigquery.jobUser, bigquery.user, src: dataViewer, stg/int/mart: dataEditor |
+| `analytics-looker-studio-sa` | Looker Studio BI参照 | bigquery.jobUser, mart: dataViewer, Looker Studio SA: tokenCreator |
 
 ### ユーザーIAM（本番運用時の参考）
 
@@ -109,7 +112,7 @@ terraform init && terraform apply
 
 > 本リポジトリはサンプル実装のため、ユーザーIAMはTerraformに含めていない。
 > `terraform/iam.tf` にテンプレートをコメントアウトで記載。
-> ビジネスユーザーがLooker Studioでデータソースを作成する場合、`looker-studio-viewer` SAへの `serviceAccountUser` 権限が必要。
+> ビジネスユーザーがLooker Studioでデータソースを作成する場合、`analytics-looker-studio-sa` SAへの `serviceAccountUser` 権限が必要。
 
 ## 過去データの取得（バックフィル）
 
@@ -118,14 +121,22 @@ terraform init && terraform apply
 **Bash / macOS / Linux:**
 ```bash
 curl -H "Authorization: Bearer $(gcloud auth print-identity-token)" \
-  "https://asia-northeast1-<PROJECT_ID>.cloudfunctions.net/ingest-hyperliquid?start_date=2025-10-01&end_date=2025-12-31"
+  "https://asia-northeast1-<PROJECT_ID>.cloudfunctions.net/hyperliquid-ingest-function?start_date=2025-10-01&end_date=2025-12-31"
 ```
 
 **PowerShell (Windows):**
 ```powershell
 curl.exe -H "Authorization: Bearer $(gcloud auth print-identity-token)" `
-  "https://asia-northeast1-<PROJECT_ID>.cloudfunctions.net/ingest-hyperliquid?start_date=2025-10-01&end_date=2025-12-31"
+  "https://asia-northeast1-<PROJECT_ID>.cloudfunctions.net/hyperliquid-ingest-function?start_date=2025-10-01&end_date=2025-12-31"
 ```
+
+## ドキュメント
+
+| ドキュメント | 内容 |
+|:---|:---|
+| [docs/NAMING_CONVENTION.md](docs/NAMING_CONVENTION.md) | GCPリソース・Dataform・カラム命名規則 |
+| [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) | デプロイ手順詳細 |
+| [docs/DESTROY.md](docs/DESTROY.md) | Destroy手順 |
 
 ## 注意事項
 

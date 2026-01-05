@@ -19,7 +19,7 @@ resource "google_bigquery_table" "candle_1h" {
   dataset_id          = google_bigquery_dataset.sources.dataset_id
   table_id            = "candle_1h"
   project             = var.gcp_project_id
-  deletion_protection = true
+  deletion_protection = false
   description         = "HyperLiquid 1-hour candle data (BTC, ETH, DOGE)"
 
   schema = jsonencode([
