@@ -41,11 +41,13 @@ provider "google-beta" {
 resource "google_project_service" "required_apis" {
   for_each = toset([
     "bigquery.googleapis.com",
-    "cloudfunctions.googleapis.com",
     "cloudbuild.googleapis.com",
-    "run.googleapis.com",
-    "dataform.googleapis.com",
+    "cloudfunctions.googleapis.com",
     "cloudscheduler.googleapis.com",
+    "dataform.googleapis.com",
+    "logging.googleapis.com",
+    "monitoring.googleapis.com",
+    "run.googleapis.com",
     "secretmanager.googleapis.com",
   ])
 

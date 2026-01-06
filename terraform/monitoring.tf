@@ -1,20 +1,4 @@
 ################################################################################
-# Required APIs for Monitoring
-################################################################################
-
-resource "google_project_service" "logging_api" {
-  project            = var.gcp_project_id
-  service            = "logging.googleapis.com"
-  disable_on_destroy = false
-}
-
-resource "google_project_service" "monitoring_api" {
-  project            = var.gcp_project_id
-  service            = "monitoring.googleapis.com"
-  disable_on_destroy = false
-}
-
-################################################################################
 # Log-based Metric (Dataform failures)
 ################################################################################
 
@@ -35,7 +19,7 @@ resource "google_logging_metric" "dataform_failures" {
     display_name = "Dataform Workflow Failures"
   }
 
-  depends_on = [google_project_service.logging_api]
+  depends_on = [google_project_service.required_apis]
 }
 
 ################################################################################
@@ -51,7 +35,7 @@ resource "google_monitoring_notification_channel" "dataform_email" {
     email_address = var.alert_recipient_email
   }
 
-  depends_on = [google_project_service.monitoring_api]
+  depends_on = [google_project_service.required_apis]
 }
 
 ################################################################################
